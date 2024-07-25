@@ -1,11 +1,10 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
+import jm.task.core.jdbc.util.JDBCUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,18 +32,9 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private static final String SELECT_ALL = "SELECT * from users;";
 
-    private Connection connection = null;
-
-    public UserDaoJDBCImpl() {
-        try {
-            connection = Util.getConnection();
-        } catch (SQLException exception) {
-            LOGGER.log(Level.WARNING, "Can't connect to DB", exception);
-        }
-    }
-
     public void createUsersTable() {
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             statement.execute(CREATE);
         } catch (Exception exception) {
             LOGGER.log(Level.WARNING, "Can't create users table", exception);
@@ -52,7 +42,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             statement.execute(DROP);
         } catch (Exception exception) {
             LOGGER.log(Level.WARNING, "Can't drop users table", exception);
@@ -60,7 +51,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             String sqlStatement = "INSERT users(name, lastName, age) VALUES('" + name + "'," +
                     " '" + lastName + "', '" + String.valueOf(age) + "');";
             statement.executeUpdate(sqlStatement);
@@ -70,7 +62,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             String sqlStatement = "DELETE from users WHERE id=" + id + ";";
             statement.executeUpdate(sqlStatement);
         } catch (Exception exception) {
@@ -80,7 +73,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> result = new ArrayList<>();
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             ResultSet resultSet = statement.executeQuery(SELECT_ALL);
             while (resultSet.next()) {
                 User user = new User();
@@ -97,7 +91,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        try (Statement statement = connection.createStatement()){
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement()){
             statement.executeUpdate(CLEAN);
         } catch (Exception exception) {
             LOGGER.log(Level.WARNING, "Can't clean users table", exception);
