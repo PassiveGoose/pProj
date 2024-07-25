@@ -19,7 +19,7 @@ public class JDBCUtil {
     private static Connection connection = null;
 
     public static Connection getConnection() throws SQLException {
-        if (connection == null) {
+        if (connection == null || connection.isClosed()) {
             try {
                 Driver driver = new Driver();
                 DriverManager.registerDriver(driver);
