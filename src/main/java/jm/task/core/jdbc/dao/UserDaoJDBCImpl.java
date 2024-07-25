@@ -39,7 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try {
             connection = Util.getConnection();
         } catch (SQLException exception) {
-            LOGGER.log(Level.WARNING, "Can't connect to DB");
+            LOGGER.log(Level.WARNING, "Can't connect to DB", exception);
         }
     }
 
@@ -47,7 +47,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()){
             statement.execute(CREATE);
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't create users table");
+            LOGGER.log(Level.WARNING, "Can't create users table", exception);
         }
     }
 
@@ -55,7 +55,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()){
             statement.execute(DROP);
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't drop users table");
+            LOGGER.log(Level.WARNING, "Can't drop users table", exception);
         }
     }
 
@@ -65,16 +65,16 @@ public class UserDaoJDBCImpl implements UserDao {
                     " '" + lastName + "', '" + String.valueOf(age) + "');";
             statement.executeUpdate(sqlStatement);
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't save user");
+            LOGGER.log(Level.WARNING, "Can't save user", exception);
         }
     }
 
     public void removeUserById(long id) {
         try (Statement statement = connection.createStatement()){
-            String sqlStatement = CLEAN + " WHERE id=" + id;
+            String sqlStatement = "DELETE from users WHERE id=" + id + ";";
             statement.executeUpdate(sqlStatement);
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't remove user");
+            LOGGER.log(Level.WARNING, "Can't remove user", exception);
         }
     }
 
@@ -91,7 +91,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 result.add(user);
             }
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't get users");
+            LOGGER.log(Level.WARNING, "Can't get users", exception);
         }
         return result;
     }
@@ -100,7 +100,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()){
             statement.executeUpdate(CLEAN);
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Can't clean users table");
+            LOGGER.log(Level.WARNING, "Can't clean users table", exception);
         }
     }
 }
