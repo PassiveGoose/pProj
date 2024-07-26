@@ -26,7 +26,7 @@ public class HibernateUtil {
                         .applySettings(configuration.getProperties()).build();
                 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             } catch (Exception exception) {
-                LOGGER.log(Level.WARNING, "Can't open db connection");
+                LOGGER.log(Level.WARNING, "Can't open db connection", exception);
             }
         }
         return sessionFactory;

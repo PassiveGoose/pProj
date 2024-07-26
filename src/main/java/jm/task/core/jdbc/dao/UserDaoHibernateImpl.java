@@ -7,10 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,13 +17,13 @@ public class UserDaoHibernateImpl implements UserDao {
 
     private static final Logger LOGGER = Logger.getLogger(UserDaoHibernateImpl.class.getName());
 
-    private static final String CREATE = "CREATE TABLE IF NOT EXISTS users " +
+    private static final String CREATE = "CREATE TABLE IF NOT EXISTS User " +
                                          "(id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
                                          "name VARCHAR(50) NOT NULL, lastName VARCHAR(50) NOT NULL, " +
                                          "age TINYINT NOT NULL)";
 
 
-    private static final String DROP = "DROP TABLE IF EXISTS users";
+    private static final String DROP = "DROP TABLE IF EXISTS User";
 
     @Override
     public void createUsersTable() {
@@ -75,7 +72,7 @@ public class UserDaoHibernateImpl implements UserDao {
         Transaction transaction;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            User user = session.load(User.class, id);
+            User user = session.get(User.class, id);
             session.delete(user);
             transaction.commit();
             LOGGER.log(Level.INFO, user + " removed");
@@ -88,12 +85,9 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<User> cq = cb.createQuery(User.class);
-            Root<User> rootEntry = cq.from(User.class);
-            CriteriaQuery<User> all = cq.select(rootEntry);
-            TypedQuery<User> allQuery = session.createQuery(all);
-            users =  allQuery.getResultList();
+            CriteriaQuery<User> criteriaQuery = session.getCriteriaBuilder().createQuery(User.class);
+            criteriaQuery.from(User.class);
+            users =  session.createQuery(criteriaQuery).getResultList();
             LOGGER.log(Level.INFO, "Users list was provided");
         } catch (HibernateException exception) {
             LOGGER.log(Level.WARNING, "Can't save user", exception);
