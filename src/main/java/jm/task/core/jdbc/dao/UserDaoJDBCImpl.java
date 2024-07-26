@@ -15,22 +15,21 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private static final Logger LOGGER = Logger.getLogger(UserDaoJDBCImpl.class.getName());
 
-    private static final String CREATE = """
-            CREATE TABLE `mydb`.`users` (
-              `id` INT NOT NULL AUTO_INCREMENT,
-              `name` VARCHAR(45) NOT NULL,
-              `lastName` VARCHAR(45) NOT NULL,
-              `age` INT NOT NULL,
-              PRIMARY KEY (`id`),
-              UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
-            ENGINE = InnoDB
-            DEFAULT CHARACTER SET = utf8;""";
+    private static final String CREATE = "CREATE TABLE `mydb`.`" + JDBCUtil.getTableName() + "` +  (\n" +
+                                         "`id` INT NOT NULL AUTO_INCREMENT,\n" +
+                                         "`name` VARCHAR(45) NOT NULL,\n" +
+                                         "`lastName` VARCHAR(45) NOT NULL,\n" +
+                                         "`age` INT NOT NULL,\n" +
+                                         "PRIMARY KEY (`id`),\n" +
+                                         "UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)\n" +
+                                         "ENGINE = InnoDB\n" +
+                                         "DEFAULT CHARACTER SET = utf8;";
 
-    private static final String DROP = "DROP TABLE users;";
+    private static final String DROP = "DROP TABLE " + JDBCUtil.getTableName() + ";";
 
-    private static final String CLEAN = "DELETE from users;";
+    private static final String CLEAN = "DELETE from " + JDBCUtil.getTableName() + ";";
 
-    private static final String SELECT_ALL = "SELECT * from users;";
+    private static final String SELECT_ALL = "SELECT * from " + JDBCUtil.getTableName() + ";";
 
     public void createUsersTable() {
         try (Connection connection = JDBCUtil.getConnection();
@@ -53,7 +52,8 @@ public class UserDaoJDBCImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = JDBCUtil.getConnection();
              Statement statement = connection.createStatement()){
-            String sqlStatement = "INSERT users(name, lastName, age) VALUES('" + name + "'," +
+            String sqlStatement = "INSERT " + JDBCUtil.getTableName()
+                    + "(name, lastName, age) VALUES('" + name + "'," +
                     " '" + lastName + "', '" + String.valueOf(age) + "');";
             statement.executeUpdate(sqlStatement);
         } catch (Exception exception) {
@@ -64,7 +64,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public void removeUserById(long id) {
         try (Connection connection = JDBCUtil.getConnection();
              Statement statement = connection.createStatement()){
-            String sqlStatement = "DELETE from users WHERE id=" + id + ";";
+            String sqlStatement = "DELETE from " + JDBCUtil.getTableName() + " WHERE id=" + id + ";";
             statement.executeUpdate(sqlStatement);
         } catch (Exception exception) {
             LOGGER.log(Level.WARNING, "Can't remove user", exception);

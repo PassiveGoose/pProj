@@ -16,6 +16,8 @@ public class JDBCUtil {
     private static final String USERNAME = "mborisov";
     private static final String PASSWORD = "PassiveGoose";
 
+    private static final String TABLE_NAME = "users";
+
     private static Connection connection = null;
 
     public static Connection getConnection() throws SQLException {
@@ -25,10 +27,14 @@ public class JDBCUtil {
                 DriverManager.registerDriver(driver);
                 connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             } catch (SQLException exc) {
-                LOGGER.log(Level.WARNING, "Can't open connection");
+                LOGGER.log(Level.WARNING, "Can't open connection", exc);
             }
         }
 
         return connection;
+    }
+
+    public static String getTableName() {
+        return TABLE_NAME;
     }
 }
